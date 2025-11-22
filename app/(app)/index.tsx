@@ -25,10 +25,7 @@ export default function Home() {
   const filteredNotes = useMemo(() => {
     if (!searchQuery.trim()) return notes;
     const query = searchQuery.toLowerCase().trim();
-    return notes.filter(
-      (note) =>
-        note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query),
-    );
+    return notes.filter((note) => note.title.toLowerCase().includes(query));
   }, [notes, searchQuery]);
 
   useEffect(() => {
@@ -150,8 +147,8 @@ export default function Home() {
             >
               <Ionicons
                 name={sortBy.direction === 'asc' ? 'arrow-up' : 'arrow-down'}
-                size={16}
-                color={Colors.dark.primary}
+                size={20}
+                color="#fff"
               />
             </TouchableOpacity>
           </View>
@@ -249,8 +246,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sortDirectionButton: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: Layout.borderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
