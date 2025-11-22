@@ -1,4 +1,5 @@
 import { GlassView } from '@/components/GlassView';
+import { SearchBar } from '@/components/SearchBar';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { Layout } from '@/constants/Layout';
@@ -8,7 +9,7 @@ import type { Note, SortField } from '@/types/note';
 import { formatRelativeTime } from '@/utils/dateFormat';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutLeft, LinearTransition } from 'react-native-reanimated';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,6 +20,16 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const { signOut, session } = useAuthStore();
   const { notes, loadNotes, deleteNote, sortBy, setSortBy } = useNotesStore();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredNotes = useMemo(() => {
+    if (!searchQuery.trim()) return notes;
+    const query = searchQuery.toLowerCase().trim();
+    return notes.filter(
+      (note) =>
+        note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query),
+    );
+  }, [notes, searchQuery]);
 
   useEffect(() => {
     if (session) {
@@ -94,6 +105,13 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onClear={() => setSearchQuery('')}
+          style={styles.searchBar}
+        />
+
         <View style={styles.sortContainer}>
           <ThemedText style={styles.sortLabel}>Sort by:</ThemedText>
 
@@ -141,16 +159,24 @@ export default function Home() {
       </GlassView>
 
       <FlatList
-        data={notes}
+        data={filteredNotes}
         renderItem={renderNote}
         keyExtractor={(item) => item.id}
         contentContainerStyle={[styles.listContent, { paddingBottom: insets.bottom + 100 }]}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={64} color={Colors.dark.icon} />
-            <ThemedText style={styles.emptyText}>No notes yet</ThemedText>
+            <Ionicons
+              name={searchQuery ? 'search-outline' : 'document-text-outline'}
+              size={64}
+              color={Colors.dark.icon}
+            />
+            <ThemedText style={styles.emptyText}>
+              {searchQuery ? 'No results found' : 'No notes yet'}
+            </ThemedText>
             <ThemedText style={styles.emptySubtext}>
-              Tap the + button to create your first note
+              {searchQuery
+                ? `No notes found matching "${searchQuery}"`
+                : 'Tap the + button to create your first note'}
             </ThemedText>
           </View>
         }
@@ -187,6 +213,9 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     padding: 8,
+  },
+  searchBar: {
+    marginBottom: Layout.spacing.md,
   },
   sortContainer: {
     gap: Layout.spacing.sm,

@@ -187,6 +187,33 @@ interface InputProps extends TextInputProps {
 
 ---
 
+### SearchBar
+
+A dedicated search input component with icon and clear button.
+
+**Props:**
+
+```typescript
+interface SearchBarProps extends TextInputProps {
+  onClear?: () => void;
+}
+```
+
+**Usage:**
+
+```tsx
+<SearchBar value={searchQuery} onChangeText={setSearchQuery} onClear={() => setSearchQuery('')} />
+```
+
+**Features:**
+
+- Search icon prefix
+- Clear button when text exists
+- Focus animations
+- Consistent styling
+
+---
+
 ## Constants
 
 ### Colors
@@ -416,10 +443,9 @@ Planned components for future development:
 4. **Chip** - Tag/category chips
 5. **Modal** - Bottom sheet modals
 6. **Toast** - Notification toasts
-7. **SearchBar** - Search input with icon
-8. **EmptyState** - Consistent empty states
-9. **LoadingSpinner** - Loading indicators
-10. **Skeleton** - Loading placeholders
+7. **EmptyState** - Consistent empty states
+8. **LoadingSpinner** - Loading indicators
+9. **Skeleton** - Loading placeholders
 
 ---
 

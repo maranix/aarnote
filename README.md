@@ -15,7 +15,7 @@ A modern, premium note-taking application built with React Native and Expo, feat
 - 🔒 **Secure**: Password hashing with SHA-256
 - 💾 **Local-First**: MMKV storage for instant access
 - 📸 **Image Support**: Add images from camera or gallery
-- 🔍 **Sorting**: Sort notes by date or title
+- 🔍 **Search & Sort**: Filter notes by text and sort by date/title
 - ✏️ **Rich Editing**: Create, edit, and delete notes
 - 🎭 **Animations**: Smooth transitions and micro-interactions
 
@@ -132,7 +132,8 @@ See [Dependencies](./docs/DEPENDENCIES.md) for full list and rationale.
 - Create notes with title, content, and optional image
 - Edit existing notes
 - Delete notes with confirmation
-- Sort by last update or title
+- Search notes by title or content
+- Sort by last update or title (ascending/descending)
 - Image compression for optimal storage
 
 ### UI/UX
