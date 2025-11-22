@@ -1,13 +1,14 @@
-import bcrypt from 'bcryptjs';
+import * as Crypto from 'expo-crypto';
 
-const SALT_ROUNDS = 10;
-
+// Hash a password using SHA-256
 export async function hashPassword(password: string): Promise<string> {
-  const hash = await bcrypt.hash(password, SALT_ROUNDS);
+  // expo-crypto returns a hex string
+  const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, password);
   return hash;
 }
 
+// Verify password by comparing SHA-256 hashes
 export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
-  const isValid = await bcrypt.compare(password, hashedPassword);
-  return isValid;
+  const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, password);
+  return hash === hashedPassword;
 }
