@@ -8,4 +8,5 @@ export const storage = createMMKV({
 export const STORAGE_KEYS = {
   USERS: 'users',
   CURRENT_USER: 'current_user',
+  NOTES: 'notes',
 } as const;
