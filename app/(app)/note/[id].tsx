@@ -20,7 +20,7 @@ import {
   View,
 } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function NoteDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -156,10 +156,12 @@ export default function NoteDetail() {
     ]);
   };
 
+  const insets = useSafeAreaInsets();
+
   if (!note) {
     return (
-      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-        <GlassView style={styles.header} intensity={80} tint="dark">
+      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <GlassView style={[styles.header, { paddingTop: insets.top }]} intensity={80} tint="dark">
           <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
             <Ionicons name="arrow-back" size={24} color={Colors.dark.text} />
           </TouchableOpacity>
@@ -173,12 +175,12 @@ export default function NoteDetail() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <GlassView style={styles.header} intensity={80} tint="dark">
+        <GlassView style={[styles.header, { paddingTop: insets.top }]} intensity={80} tint="dark">
           <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
             <Ionicons name="arrow-back" size={24} color={Colors.dark.text} />
           </TouchableOpacity>
