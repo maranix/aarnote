@@ -20,7 +20,7 @@ interface NotesState {
 
 export const useNotesStore = create<NotesState>((set, get) => ({
   notes: [],
-  sortBy: 'lastUpdate',
+  sortBy: { field: 'lastUpdate', direction: 'desc' },
   isLoading: false,
   error: null,
 

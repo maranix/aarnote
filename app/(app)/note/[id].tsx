@@ -4,6 +4,8 @@ import { Colors } from '@/constants/Colors';
 import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/store/authStore';
 import { useNotesStore } from '@/store/notesStore';
+import { formatDateTime } from '@/utils/dateFormat';
+import { requestCameraPermission, requestMediaLibraryPermission } from '@/utils/permissions';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -40,24 +42,6 @@ export default function NoteDetail() {
       setImageUri(note.imageUri);
     }
   }, [note]);
-
-  const requestCameraPermission = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Camera permission is required to take photos');
-      return false;
-    }
-    return true;
-  };
-
-  const requestMediaLibraryPermission = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Media library permission is required to pick images');
-      return false;
-    }
-    return true;
-  };
 
   const handleTakePhoto = async () => {
     const hasPermission = await requestCameraPermission();
@@ -259,13 +243,7 @@ export default function NoteDetail() {
           {!isEditing && (
             <Animated.View entering={FadeIn.delay(400)} style={styles.metadata}>
               <ThemedText style={styles.metadataText}>
-                Last updated{' '}
-                {new Date(note.updatedAt).toLocaleString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}
+                Last updated {formatDateTime(note.updatedAt)}
               </ThemedText>
             </Animated.View>
           )}

@@ -1,4 +1,10 @@
-export type SortOption = 'lastUpdate' | 'title';
+export type SortField = 'lastUpdate' | 'title';
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortOption {
+  field: SortField;
+  direction: SortDirection;
+}
 
 export interface Note {
   id: string;

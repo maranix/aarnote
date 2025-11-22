@@ -102,14 +102,19 @@ export class NotesService {
   static sortNotes(notes: Note[], sortBy: SortOption): Note[] {
     const sortedNotes = [...notes];
 
-    switch (sortBy) {
-      case 'lastUpdate':
-        return sortedNotes.sort((a, b) => b.updatedAt - a.updatedAt);
-      case 'title':
-        return sortedNotes.sort((a, b) => a.title.localeCompare(b.title));
-      default:
-        return sortedNotes;
+    if (sortBy.field === 'lastUpdate') {
+      sortedNotes.sort((a, b) => {
+        const diff = b.updatedAt - a.updatedAt;
+        return sortBy.direction === 'asc' ? -diff : diff;
+      });
+    } else if (sortBy.field === 'title') {
+      sortedNotes.sort((a, b) => {
+        const comparison = a.title.localeCompare(b.title);
+        return sortBy.direction === 'asc' ? comparison : -comparison;
+      });
     }
+
+    return sortedNotes;
   }
 
   /**
