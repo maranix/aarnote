@@ -4,11 +4,11 @@ import { Colors } from '@/constants/Colors';
 import { useAuthStore } from '@/store/authStore';
 
 export default function Home() {
-  const { signOut } = useAuthStore();
+  const { signOut, session } = useAuthStore();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome Home!</Text>
+      <Text style={styles.title}>Welcome, {session}!</Text>
       <Text style={styles.subtitle}>You are successfully authenticated.</Text>
 
       <TouchableOpacity style={styles.button} onPress={signOut}>

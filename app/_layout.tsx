@@ -3,9 +3,14 @@ import { Slot, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 
 function RootLayoutNav() {
-  const { session, isLoading } = useAuthStore();
+  const { session, isLoading, initializeSession } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
+
+  // Initialize session on mount
+  useEffect(() => {
+    initializeSession();
+  }, [initializeSession]);
 
   useEffect(() => {
     if (isLoading) return;
