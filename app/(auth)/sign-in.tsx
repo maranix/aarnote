@@ -1,18 +1,21 @@
-import { router } from 'expo-router';
+import { Button } from '@/components/Button';
+import { GlassView } from '@/components/GlassView';
+import { Input } from '@/components/Input';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors } from '@/constants/Colors';
+import { Layout } from '@/constants/Layout';
+import { useAuthStore } from '@/store/authStore';
+import { Link } from 'expo-router';
 import { useState } from 'react';
 import {
+  ImageBackground,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-
-import { Colors } from '@/constants/Colors';
-import { useAuthStore } from '@/store/authStore';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 export default function SignIn() {
   const { signIn, isLoading, error, clearError } = useAuthStore();
@@ -37,163 +40,163 @@ export default function SignIn() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <ImageBackground
+      source={{
+        uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop',
+      }}
+      style={styles.backgroundImage}
+      resizeMode="cover"
     >
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.card}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
+      <View style={styles.overlay} />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Animated.View entering={FadeInUp.delay(200).duration(1000).springify()}>
+            <GlassView style={styles.card} intensity={40}>
+              <View style={styles.header}>
+                <ThemedText type="largeTitle" style={styles.title}>
+                  Welcome Back
+                </ThemedText>
+                <ThemedText type="subtitle" style={styles.subtitle}>
+                  Sign in to your workspace
+                </ThemedText>
+              </View>
 
-          {error && <Text style={styles.errorText}>{error.message}</Text>}
+              {error && (
+                <Animated.View entering={FadeInDown.springify()} style={styles.errorContainer}>
+                  <ThemedText style={styles.errorText}>{error.message}</ThemedText>
+                </Animated.View>
+              )}
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Username</Text>
-            <TextInput
-              style={[styles.input, error?.field === 'username' && styles.inputError]}
-              value={username}
-              onChangeText={handleUsernameChange}
-              placeholder="Enter your username"
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isLoading}
-            />
-          </View>
+              <View style={styles.form}>
+                <Input
+                  label="Username"
+                  value={username}
+                  onChangeText={handleUsernameChange}
+                  placeholder="Enter your username"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!isLoading}
+                  error={error?.field === 'username' ? 'Invalid username' : undefined}
+                />
 
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={[styles.input, error?.field === 'password' && styles.inputError]}
-              value={password}
-              onChangeText={handlePasswordChange}
-              placeholder="Enter your password"
-              secureTextEntry
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isLoading}
-            />
-          </View>
+                <Input
+                  label="Password"
+                  value={password}
+                  onChangeText={handlePasswordChange}
+                  placeholder="Enter your password"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  editable={!isLoading}
+                  error={error?.field === 'password' ? 'Invalid password' : undefined}
+                />
 
-          <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleSignIn}
-            disabled={isLoading}
-          >
-            <Text style={styles.buttonText}>{isLoading ? 'Signing in...' : 'Sign In'}</Text>
-          </TouchableOpacity>
+                <Button
+                  title="Sign In"
+                  onPress={handleSignIn}
+                  isLoading={isLoading}
+                  style={styles.button}
+                  size="lg"
+                />
+              </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Don&apos;t have an account?</Text>
-            <TouchableOpacity onPress={() => router.push('/sign-up')}>
-              <Text style={styles.link}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+              <View style={styles.footer}>
+                <ThemedText style={styles.signupText}>
+                  Don&apos;t have an account?{' '}
+                  <Link href="/sign-up" asChild>
+                    <ThemedText style={styles.signupLink}>Sign Up</ThemedText>
+                  </Link>
+                </ThemedText>
+              </View>
+            </GlassView>
+          </Animated.View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: Layout.spacing.lg,
   },
   card: {
+    borderRadius: Layout.borderRadius.xl,
+    padding: Layout.spacing.xl,
     width: '100%',
-    maxWidth: 400,
-    padding: 24,
-    borderRadius: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    maxWidth: 500,
     alignSelf: 'center',
   },
+  header: {
+    marginBottom: Layout.spacing.xl,
+    alignItems: 'center',
+  },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: Colors.light.text,
-    marginBottom: 8,
+    marginBottom: Layout.spacing.xs,
     textAlign: 'center',
+    color: Colors.dark.text,
   },
   subtitle: {
-    fontSize: 16,
-    color: Colors.light.icon,
-    marginBottom: 24,
     textAlign: 'center',
+    color: Colors.dark.textSecondary,
+    fontWeight: 'normal',
+  },
+  errorContainer: {
+    backgroundColor: 'rgba(255, 69, 58, 0.1)',
+    padding: Layout.spacing.md,
+    borderRadius: Layout.borderRadius.md,
+    marginBottom: Layout.spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 69, 58, 0.2)',
   },
   errorText: {
-    color: '#ef4444',
-    fontSize: 14,
-    marginBottom: 16,
+    color: Colors.dark.error,
     textAlign: 'center',
-    backgroundColor: '#fee2e2',
-    padding: 12,
-    borderRadius: 8,
-  },
-  inputContainer: {
-    marginBottom: 16,
-  },
-  label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.light.text,
-    marginBottom: 8,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: Colors.light.text,
-    backgroundColor: '#fff',
-  },
-  inputError: {
-    borderColor: '#ef4444',
+  form: {
+    marginBottom: Layout.spacing.xl,
   },
   button: {
-    backgroundColor: Colors.light.tint,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    marginTop: Layout.spacing.md,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: 4,
   },
   footerText: {
-    color: Colors.light.icon,
+    color: Colors.dark.textSecondary,
     fontSize: 14,
   },
-  link: {
-    color: Colors.light.tint,
+  signupText: {
+    color: Colors.dark.textSecondary,
     fontSize: 14,
+    textAlign: 'center',
+  },
+  signupLink: {
+    color: Colors.dark.primary,
     fontWeight: '600',
   },
 });

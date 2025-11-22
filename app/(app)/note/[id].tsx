@@ -1,5 +1,10 @@
+import { GlassView } from '@/components/GlassView';
+import { ThemedText } from '@/components/ThemedText';
+import { Colors } from '@/constants/Colors';
+import { Layout } from '@/constants/Layout';
 import { useAuthStore } from '@/store/authStore';
 import { useNotesStore } from '@/store/notesStore';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -10,11 +15,12 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function NoteDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -122,7 +128,6 @@ export default function NoteDetail() {
 
     if (success) {
       setIsEditing(false);
-      Alert.alert('Success', 'Note updated successfully');
     } else {
       Alert.alert('Error', 'Failed to update note');
     }
@@ -138,7 +143,6 @@ export default function NoteDetail() {
           if (id) {
             const success = deleteNote(id);
             if (success) {
-              // Refresh notes for current user
               const { loadNotes } = useNotesStore.getState();
               const currentUser = useAuthStore.getState().session;
               if (currentUser) loadNotes(currentUser);
@@ -154,171 +158,194 @@ export default function NoteDetail() {
 
   if (!note) {
     return (
-      <View style={styles.container}>
-        <View style={styles.header}>
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <GlassView style={styles.header} intensity={80} tint="dark">
           <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
-            <Text style={styles.headerButtonText}>Back</Text>
+            <Ionicons name="arrow-back" size={24} color={Colors.dark.text} />
           </TouchableOpacity>
-        </View>
+        </GlassView>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Note not found</Text>
+          <Ionicons name="document-text-outline" size={64} color={Colors.dark.icon} />
+          <ThemedText style={styles.errorText}>Note not found</ThemedText>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
-          <Text style={styles.headerButtonText}>Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{isEditing ? 'Edit Note' : 'Note'}</Text>
-        <View style={styles.headerActions}>
-          {isEditing ? (
-            <TouchableOpacity onPress={handleSave} style={styles.headerButton}>
-              <Text style={[styles.headerButtonText, styles.saveButton]}>Save</Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.headerButton}>
-                <Text style={styles.headerButtonText}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDelete} style={styles.headerButton}>
-                <Text style={[styles.headerButtonText, styles.deleteButton]}>Delete</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      </View>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <GlassView style={styles.header} intensity={80} tint="dark">
+          <TouchableOpacity onPress={() => router.back()} style={styles.headerButton}>
+            <Ionicons name="arrow-back" size={24} color={Colors.dark.text} />
+          </TouchableOpacity>
 
-      <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-        <TextInput
-          style={styles.titleInput}
-          placeholder="Title"
-          value={title}
-          onChangeText={setTitle}
-          editable={isEditing}
-          placeholderTextColor="#999"
-        />
-
-        {imageUri ? (
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
-            {isEditing && (
-              <TouchableOpacity style={styles.removeImageButton} onPress={handleRemoveImage}>
-                <Text style={styles.removeImageText}>✕</Text>
+          <View style={styles.headerActions}>
+            {isEditing ? (
+              <TouchableOpacity onPress={handleSave} style={styles.actionButton}>
+                <ThemedText style={styles.saveText}>Done</ThemedText>
               </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.actionButton}>
+                  <Ionicons name="create-outline" size={24} color={Colors.dark.primary} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDelete} style={styles.actionButton}>
+                  <Ionicons name="trash-outline" size={24} color={Colors.dark.error} />
+                </TouchableOpacity>
+              </>
             )}
           </View>
-        ) : (
-          isEditing && (
-            <TouchableOpacity style={styles.addImageButton} onPress={handleImageOptions}>
-              <Text style={styles.addImageText}>+ Add Image</Text>
-            </TouchableOpacity>
-          )
-        )}
+        </GlassView>
 
-        <TextInput
-          style={styles.contentInput}
-          placeholder="Start writing..."
-          value={content}
-          onChangeText={setContent}
-          multiline
-          textAlignVertical="top"
-          editable={isEditing}
-          placeholderTextColor="#999"
-        />
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+          <Animated.View entering={FadeInDown.delay(100).springify()}>
+            <TextInput
+              style={styles.titleInput}
+              placeholder="Title"
+              value={title}
+              onChangeText={setTitle}
+              editable={isEditing}
+              placeholderTextColor={Colors.dark.textSecondary}
+              selectionColor={Colors.dark.primary}
+            />
+          </Animated.View>
 
-        {!isEditing && (
-          <View style={styles.metadata}>
-            <Text style={styles.metadataText}>
-              Created: {new Date(note.createdAt).toLocaleString()}
-            </Text>
-            <Text style={styles.metadataText}>
-              Updated: {new Date(note.updatedAt).toLocaleString()}
-            </Text>
-          </View>
-        )}
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Animated.View entering={FadeInDown.delay(200).springify()}>
+            {imageUri ? (
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+                {isEditing && (
+                  <GlassView style={styles.removeImageButton} intensity={40}>
+                    <TouchableOpacity onPress={handleRemoveImage} style={styles.removeTouchArea}>
+                      <Ionicons name="close" size={20} color="#fff" />
+                    </TouchableOpacity>
+                  </GlassView>
+                )}
+              </View>
+            ) : (
+              isEditing && (
+                <TouchableOpacity
+                  style={styles.addImageButton}
+                  onPress={handleImageOptions}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="image-outline" size={24} color={Colors.dark.primary} />
+                  <ThemedText style={styles.addImageText}>Add Cover Image</ThemedText>
+                </TouchableOpacity>
+              )
+            )}
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.delay(300).springify()}>
+            <TextInput
+              style={styles.contentInput}
+              placeholder="Start writing..."
+              value={content}
+              onChangeText={setContent}
+              multiline
+              textAlignVertical="top"
+              editable={isEditing}
+              placeholderTextColor={Colors.dark.textSecondary}
+              selectionColor={Colors.dark.primary}
+            />
+          </Animated.View>
+
+          {!isEditing && (
+            <Animated.View entering={FadeIn.delay(400)} style={styles.metadata}>
+              <ThemedText style={styles.metadataText}>
+                Last updated{' '}
+                {new Date(note.updatedAt).toLocaleString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })}
+              </ThemedText>
+            </Animated.View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.dark.background,
+  },
+  flex: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
+    paddingHorizontal: Layout.spacing.lg,
+    paddingVertical: Layout.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: Colors.dark.border,
   },
   headerButton: {
-    paddingHorizontal: 8,
-  },
-  headerButtonText: {
-    fontSize: 16,
-    color: '#007AFF',
-  },
-  saveButton: {
-    fontWeight: '600',
-  },
-  deleteButton: {
-    color: '#FF3B30',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    padding: 4,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 16,
+    alignItems: 'center',
+  },
+  actionButton: {
+    padding: 4,
+  },
+  saveText: {
+    color: Colors.dark.primary,
+    fontWeight: '600',
+    fontSize: 16,
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: Layout.spacing.lg,
   },
   titleInput: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.dark.text,
+    marginBottom: Layout.spacing.lg,
     padding: 0,
+    fontFamily: 'System',
   },
   addImageButton: {
-    height: 150,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
-    borderStyle: 'dashed',
+    height: 60,
+    backgroundColor: Colors.dark.surfaceHighlight,
+    borderRadius: Layout.borderRadius.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: Layout.spacing.lg,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+    borderStyle: 'dashed',
   },
   addImageText: {
-    fontSize: 16,
-    color: '#999',
+    fontSize: 14,
+    color: Colors.dark.primary,
     fontWeight: '500',
   },
   imageContainer: {
     position: 'relative',
-    marginBottom: 16,
+    marginBottom: Layout.spacing.lg,
+    borderRadius: Layout.borderRadius.md,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: Colors.dark.surfaceHighlight,
   },
   removeImageButton: {
     position: 'absolute',
@@ -327,40 +354,46 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  removeImageText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+  removeTouchArea: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentInput: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.dark.text,
     lineHeight: 24,
     minHeight: 200,
     padding: 0,
+    fontFamily: 'System',
+    textAlignVertical: 'top',
   },
   metadata: {
-    marginTop: 24,
-    paddingTop: 16,
+    marginTop: Layout.spacing.xl,
+    paddingTop: Layout.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: Colors.dark.border,
+    marginBottom: 40,
   },
   metadataText: {
     fontSize: 12,
-    color: '#999',
-    marginBottom: 4,
+    color: Colors.dark.textSecondary,
+    fontStyle: 'italic',
   },
   errorContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    opacity: 0.5,
   },
   errorText: {
     fontSize: 18,
-    color: '#999',
+    color: Colors.dark.text,
+    marginTop: 16,
   },
 });

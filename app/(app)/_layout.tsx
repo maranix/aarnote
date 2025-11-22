@@ -21,8 +21,10 @@ export default function AppLayout() {
 
   // This layout can be deferred because it's not the root layout.
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ title: 'Home' }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="create-note" />
+      <Stack.Screen name="note/[id]" />
     </Stack>
   );
 }

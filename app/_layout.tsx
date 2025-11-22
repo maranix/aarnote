@@ -1,6 +1,10 @@
+import { Colors } from '@/constants/Colors';
 import { useAuthStore } from '@/store/authStore';
+import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Slot, useRouter, useSegments } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 
 function RootLayoutNav() {
   const { session, isLoading, initializeSession } = useAuthStore();
@@ -24,7 +28,31 @@ function RootLayoutNav() {
     }
   }, [session, segments, isLoading, router]);
 
-  return <Slot />;
+  const theme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: Colors.dark.background,
+      card: Colors.dark.surface,
+      text: Colors.dark.text,
+      border: Colors.dark.border,
+      primary: Colors.dark.primary,
+    },
+  };
+
+  return (
+    <ThemeProvider value={theme}>
+      <StatusBar style="light" />
+      <View style={{ flex: 1, backgroundColor: Colors.dark.background }}>
+        <Slot
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: Colors.dark.background },
+          }}
+        />
+      </View>
+    </ThemeProvider>
+  );
 }
 
 export default function RootLayout() {
