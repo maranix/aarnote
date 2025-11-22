@@ -7,6 +7,12 @@ A modern, premium note-taking application built with React Native and Expo, feat
 ![Expo](https://img.shields.io/badge/Expo-~54.0-000020?logo=expo)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-3178C6?logo=typescript)
 
+## 📥 Download
+
+Try the app on your Android device!
+
+[**Download APK**]()
+
 ## ✨ Features
 
 - 📱 **Cross-Platform**: Runs on iOS and Android
