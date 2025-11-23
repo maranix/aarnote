@@ -6,7 +6,7 @@ This document describes how data flows through the AARNote application for vario
 
 ### Sign Up Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant SignUpScreen
@@ -31,11 +31,11 @@ participant crypto
         SignUpScreen-->>User: Navigate to app
     end
 
-\`\`\`
+```
 
 ### Sign In Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant SignInScreen
@@ -66,11 +66,11 @@ participant crypto
         end
     end
 
-\`\`\`
+```
 
 ### Session Initialization
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 participant App
 participant authStore
@@ -90,13 +90,13 @@ participant Router
         App->>Router: Navigate to /(auth)
     end
 
-\`\`\`
+```
 
 ## Notes Management Flow
 
 ### Create Note Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant CreateNoteScreen
@@ -128,11 +128,11 @@ participant Router
     MMKV-->>notesStore: notes[]
     notesStore->>notesStore: Update state
 
-\`\`\`
+```
 
 ### Update Note Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant NoteDetailScreen
@@ -156,11 +156,11 @@ participant MMKV
     notesStore-->>NoteDetailScreen: Success
     NoteDetailScreen->>NoteDetailScreen: Disable editing
 
-\`\`\`
+```
 
 ### Delete Note Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant NoteDetailScreen
@@ -181,11 +181,11 @@ participant Router
     notesStore-->>NoteDetailScreen: Success
     NoteDetailScreen->>Router: Navigate back
 
-\`\`\`
+```
 
 ### Load Notes Sequence
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 participant HomeScreen
 participant notesStore
@@ -204,83 +204,83 @@ participant MMKV
     notesStore-->>HomeScreen: Notes loaded
     HomeScreen->>HomeScreen: Render notes list
 
-\`\`\`
+```
 
 ## State Updates
 
 ### Zustand State Flow
 
-\`\`\`
+```
 ┌─────────────┐
-│ Action │ (User interaction)
+│   Action    │ (User interaction)
 └──────┬──────┘
-│
-▼
+       │
+       ▼
 ┌─────────────┐
-│ Store │ (Zustand)
-│ Method │ - Updates state
+│    Store    │ (Zustand)
+│   Method    │ - Updates state
 └──────┬──────┘ - Persists to MMKV
-│
-▼
+       │
+       ▼
 ┌─────────────┐
-│ MMKV │ (Persistence)
-│ Storage │
+│    MMKV     │ (Persistence)
+│   Storage   │
 └──────┬──────┘
-│
-▼
+       │
+       ▼
 ┌─────────────┐
-│ State │ (Zustand notifies)
-│ Update │
+│    State    │ (Zustand notifies)
+│   Update    │
 └──────┬──────┘
-│
-▼
+       │
+       ▼
 ┌─────────────┐
-│ UI │ (React re-renders)
-│ Re-render │
+│     UI      │ (React re-renders)
+│  Re-render  │
 └─────────────┘
-\`\`\`
+```
 
 ## Data Persistence
 
 ### MMKV Storage Keys
 
-\`\`\`typescript
+```typescript
 // Authentication
-'users' // JSON: User[]
-'currentSession' // string: username
+'users'; // JSON: User[]
+'currentSession'; // string: username
 
 // Notes (per user)
-'notes\_${username}' // JSON: Note[]
-\`\`\`
+'notes_${username}'; // JSON: Note[]
+```
 
 ### Data Structures
 
 #### User Object
 
-\`\`\`typescript
+```typescript
 {
-username: string;
-passwordHash: string; // SHA-256 hash
-createdAt: string; // ISO 8601 timestamp
+  username: string;
+  passwordHash: string; // SHA-256 hash
+  createdAt: string; // ISO 8601 timestamp
 }
-\`\`\`
+```
 
 #### Note Object
 
-\`\`\`typescript
+```typescript
 {
-id: string; // UUID v4
-title: string;
-content: string;
-imageUri?: string; // Optional image path
-createdAt: string; // ISO 8601 timestamp
-updatedAt: string; // ISO 8601 timestamp
+  id: string; // UUID v4
+  title: string;
+  content: string;
+  imageUri?: string; // Optional image path
+  createdAt: string; // ISO 8601 timestamp
+  updatedAt: string; // ISO 8601 timestamp
 }
-\`\`\`
+```
 
 ## Error Handling Flow
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 participant Component
 participant Store
@@ -300,30 +300,30 @@ participant User
         Component-->>User: Show user-friendly message
     end
 
-\`\`\`
+```
 
 ## Navigation Flow
 
-\`\`\`
+```
 App Start
-│
-▼
+    │
+    ▼
 Initialize Session
-│
-├─── Session exists ──────► /(app)/index
-│ │
-│ ├─► Create Note ──► /(app)/create-note
-│ │
-│ └─► View Note ────► /(app)/note/[id]
-│
-└─── No session ─────────► /(auth)/sign-in
-│
-└─► Sign Up ───────► /(auth)/sign-up
-\`\`\`
+    │
+    ├─── Session exists ──────► /(app)/index
+    │                           │
+    │                           ├─► Create Note ──► /(app)/create-note
+    │                           │
+    │                           └─► View Note ────► /(app)/note/[id]
+    │
+    └─── No session ─────────► /(auth)/sign-in
+                                │
+                                └─► Sign Up ───────► /(auth)/sign-up
+```
 
 ## Image Handling Flow
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant Screen
@@ -349,11 +349,11 @@ participant FileSystem
         Screen-->>User: Show permission error
     end
 
-\`\`\`
+```
 
 ## Sorting Flow
 
-\`\`\`mermaid
+```mermaid
 sequenceDiagram
 actor User
 participant HomeScreen
@@ -371,7 +371,7 @@ participant notesStore
     notesStore-->>HomeScreen: State updated
     HomeScreen->>HomeScreen: Re-render with sorted notes
 
-\`\`\`
+```
 
 ## Performance Considerations
 

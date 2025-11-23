@@ -16,39 +16,39 @@ AARNote is a React Native note-taking application built with Expo, featuring a m
 
 ## Project Structure
 
-\`\`\`
+```
 aarnote/
-├── app/ # Expo Router app directory
-│ ├── (app)/ # Authenticated app routes
-│ │ ├── index.tsx # Home screen (notes list)
-│ │ ├── create-note.tsx # Create new note
-│ │ ├── note/
-│ │ │ └── [id].tsx # Note detail/edit screen
-│ │ └── \_layout.tsx # App layout with auth guard
-│ ├── (auth)/ # Authentication routes
-│ │ ├── sign-in.tsx # Sign in screen
-│ │ ├── sign-up.tsx # Sign up screen
-│ │ └── \_layout.tsx # Auth layout
-│ └── \_layout.tsx # Root layout
+├── app/                    # Expo Router app directory
+│   ├── (app)/             # Authenticated app routes
+│   │   ├── index.tsx      # Home screen (notes list)
+│   │   ├── create-note.tsx # Create new note
+│   │   ├── note/
+│   │   │   └── [id].tsx   # Note detail/edit screen
+│   │   └── _layout.tsx    # App layout with auth guard
+│   ├── (auth)/            # Authentication routes
+│   │   ├── sign-in.tsx    # Sign in screen
+│   │   ├── sign-up.tsx    # Sign up screen
+│   │   └── _layout.tsx    # Auth layout
+│   └── _layout.tsx        # Root layout
 ├── src/
-│ ├── components/ # Reusable UI components
-│ │ ├── Button.tsx # Premium button component
-│ │ ├── GlassView.tsx # Glassmorphism container
-│ │ ├── Input.tsx # Styled text input
-│ │ └── ThemedText.tsx # Typography component
-│ ├── constants/ # App constants
-│ │ ├── Colors.ts # Color palette
-│ │ └── Layout.ts # Spacing, sizes, radii
-│ ├── store/ # Zustand stores
-│ │ ├── authStore.ts # Authentication state
-│ │ └── notesStore.ts # Notes management
-│ └── types/ # TypeScript types
-│ ├── note.ts # Note type definitions
-│ └── user.ts # User type definitions
-├── assets/ # Static assets
-│ └── images/ # App icons and images
-└── docs/ # Documentation
-\`\`\`
+│   ├── components/        # Reusable UI components
+│   │   ├── Button.tsx     # Premium button component
+│   │   ├── GlassView.tsx  # Glassmorphism container
+│   │   ├── Input.tsx      # Styled text input
+│   │   └── ThemedText.tsx # Typography component
+│   ├── constants/         # App constants
+│   │   ├── Colors.ts      # Color palette
+│   │   └── Layout.ts      # Spacing, sizes, radii
+│   ├── store/             # Zustand stores
+│   │   ├── authStore.ts   # Authentication state
+│   │   └── notesStore.ts  # Notes management
+│   └── types/             # TypeScript types
+│       ├── note.ts        # Note type definitions
+│       └── user.ts        # User type definitions
+├── assets/                # Static assets
+│   └── images/            # App icons and images
+└── docs/                  # Documentation
+```
 
 ## Design Patterns
 
@@ -63,11 +63,12 @@ Expo Router provides automatic routing based on file structure:
 ### 2. Compound Component Pattern
 
 Components like `GlassView` and `ThemedText` wrap native components with consistent styling:
-\`\`\`tsx
+
+```tsx
 <GlassView intensity={80} tint="dark">
-<ThemedText type="largeTitle">My Notes</ThemedText>
+  <ThemedText type="largeTitle">My Notes</ThemedText>
 </GlassView>
-\`\`\`
+```
 
 ### 3. Container/Presentational Pattern
 
@@ -76,49 +77,50 @@ Screens handle data fetching and business logic, while components focus on prese
 ### 4. Custom Hooks Pattern
 
 Zustand stores expose custom hooks for state management:
-\`\`\`tsx
+
+```tsx
 const { notes, loadNotes } = useNotesStore();
 const { session, signIn } = useAuthStore();
-\`\`\`
+```
 
 ## Architecture Diagram
 
-\`\`\`
+```
 ┌─────────────────────────────────────────────────────────────┐
-│ App Layer │
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ │
-│ │ Screens │ │ Components │ │ Layouts │ │
-│ │ (Routes) │ │ (UI Kit) │ │ (Structure) │ │
-│ └──────┬───────┘ └──────┬───────┘ └──────┬───────┘ │
-│ │ │ │ │
-└─────────┼──────────────────┼──────────────────┼──────────────┘
-│ │ │
-┌─────────┼──────────────────┼──────────────────┼──────────────┐
-│ ▼ ▼ ▼ │
-│ State Layer │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ Zustand Stores │ │
-│ │ ┌──────────────┐ ┌──────────────┐ │ │
-│ │ │ authStore │ │ notesStore │ │ │
-│ │ │ - session │ │ - notes[] │ │ │
-│ │ │ - signIn() │ │ - create() │ │ │
-│ │ │ - signOut() │ │ - update() │ │ │
-│ │ └──────┬───────┘ └──────┬───────┘ │ │
-│ └─────────┼────────────────────────┼──────────────────┘ │
-└────────────┼────────────────────────┼──────────────────────┘
-│ │
-┌────────────┼────────────────────────┼──────────────────────┐
-│ ▼ ▼ │
-│ Persistence Layer │
-│ ┌──────────────────────────────────────────────────────┐ │
-│ │ MMKV Storage │ │
-│ │ ┌──────────────┐ ┌──────────────┐ │ │
-│ │ │ users │ │ notes │ │ │
-│ │ │ (hashed) │ │ (per user) │ │ │
-│ │ └──────────────┘ └──────────────┘ │ │
-│ └──────────────────────────────────────────────────────┘ │
+│                          App Layer                          │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐   │
+│  │   Screens    │    │  Components  │    │   Layouts    │   │
+│  │   (Routes)   │    │   (UI Kit)   │    │ (Structure)  │   │
+│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘   │
+│         │                   │                   │           │
+└─────────┼───────────────────┼───────────────────┼───────────┘
+          │                   │                   │
+┌─────────┼───────────────────┼───────────────────┼───────────┐
+│         ▼                   ▼                   ▼           │
+│                         State Layer                         │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                    Zustand Stores                    │   │
+│  │    ┌──────────────┐          ┌──────────────┐        │   │
+│  │    │  authStore   │          │  notesStore  │        │   │
+│  │    │  - session   │          │  - notes[]   │        │   │
+│  │    │  - signIn()  │          │  - create()  │        │   │
+│  │    │  - signOut() │          │  - update()  │        │   │
+│  │    └──────┬───────┘          └──────┬───────┘        │   │
+│  └───────────┼─────────────────────────┼────────────────┘   │
+└──────────────┼─────────────────────────┼────────────────────┘
+               │                         │
+┌──────────────┼─────────────────────────┼────────────────────┐
+│              ▼                         ▼                    │
+│                      Persistence Layer                      │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                     MMKV Storage                     │   │
+│  │    ┌──────────────┐          ┌──────────────┐        │   │
+│  │    │    users     │          │    notes     │        │   │
+│  │    │   (hashed)   │          │  (per user)  │        │   │
+│  │    └──────────────┘          └──────────────┘        │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
-\`\`\`
+```
 
 ## Key Architectural Decisions
 
