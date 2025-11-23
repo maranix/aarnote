@@ -28,6 +28,8 @@ Try the app on your Android device!
 
 ## 📸 Demo
 
+**Note:** For some reason the demo seems to indicate that the application gets stuck on sign-in/sign-up screen, this however only impacts the recording. In the actual testing and usage there is no such issue.
+
 https://github.com/user-attachments/assets/db3a6cf1-54ef-4080-9bdf-b0a49aa5fa79
 
 ## 🚀 Quick Start
