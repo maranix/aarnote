@@ -11,6 +11,7 @@ A modern, premium note-taking application built with React Native and Expo, feat
 
 Try the app on your Android device!
 
+**Note**: This is a universal apk binary, the size will be huge. Approx: 100 megabytes.
 [**Download APK**](https://github.com/maranix/aarnote/releases/download/v1.0/app-release.apk)
 
 ## ✨ Features
