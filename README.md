@@ -11,7 +11,7 @@ A modern, premium note-taking application built with React Native and Expo, feat
 
 Try the app on your Android device!
 
-[**Download APK**]()
+[**Download APK**](https://github.com/maranix/aarnote/releases/download/v1.0/app-release.apk)
 
 ## ✨ Features
 
