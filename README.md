@@ -26,9 +26,9 @@ Try the app on your Android device!
 - ✏️ **Rich Editing**: Create, edit, and delete notes
 - 🎭 **Animations**: Smooth transitions and micro-interactions
 
-## 📸 Screenshots
+## 📸 Demo
 
-> Add screenshots here
+https://github.com/user-attachments/assets/db3a6cf1-54ef-4080-9bdf-b0a49aa5fa79
 
 ## 🚀 Quick Start
 
